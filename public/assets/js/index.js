@@ -4,8 +4,9 @@ let noteText;
 let saveNoteBtn;
 let newNoteBtn;
 let noteList;
+const path = require('path');
 
-if (window.location.pathname === '/notes') {
+if (window.location.pathname ===  path.join(__dirname, '.db/db.json')) {
   noteForm = document.querySelector('.note-form');
   noteTitle = document.querySelector('.note-title');
   noteText = document.querySelector('.note-textarea');
@@ -184,7 +185,7 @@ const renderNoteList = async (notes) => {
 // Gets notes from the db and renders them to the sidebar
 const getAndRenderNotes = () => getNotes().then(renderNoteList);
 
-if (window.location.pathname === '/notes') {
+if (window.location.pathname === '/api/notes') {
   saveNoteBtn.addEventListener('click', handleNoteSave);
   newNoteBtn.addEventListener('click', handleNewNoteView);
   clearBtn.addEventListener('click', renderActiveNote);

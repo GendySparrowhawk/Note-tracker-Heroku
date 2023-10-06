@@ -1,7 +1,7 @@
 
 const express = require('express');
-const funData = require('./db/db.json');
-const dbTools = require('./db')
+const notesDb = require('./db/db.json');
+
 
 const app = express();
 // middleware channel
@@ -12,22 +12,22 @@ app.use(express.json());
 // Sample data (in-memory database)
 let notes = [];
 
-// Route to handle GET requests
+
 app.get('/api/notes', (req, res) => {
-    // Send the notes as JSON response
+
     res.json(notes);
 });
 
 // Route to handle POST requests
 app.post('/api/notes', (req, res) => {
-    // Get the new note data from the request body
+    
     const newNote = req.body;
 
-    // Add the new note to the notes array
     notes.push(newNote);
 
-    // Send a success message as JSON response
-    res.json({ message: 'Note added successfully', note: newNote });
+    res.json({
+        message: 'Note added successfully', note: newNote
+    });
 });
 
 // Start the server and listen on port 3333

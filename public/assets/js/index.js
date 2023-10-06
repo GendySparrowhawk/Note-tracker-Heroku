@@ -4,9 +4,9 @@ let noteText;
 let saveNoteBtn;
 let newNoteBtn;
 let noteList;
-const path = require('path');
 
-if (window.location.pathname ===  path.join(__dirname, '.db/db.json')) {
+
+if (window.location.pathname ===  ('./db/db.json')) {
   noteForm = document.querySelector('.note-form');
   noteTitle = document.querySelector('.note-title');
   noteText = document.querySelector('.note-textarea');

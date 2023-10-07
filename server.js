@@ -1,78 +1,74 @@
 
+
 const express = require('express');
-const notesDb = require('./db/db.json');
-
-
+const path = require('path');
 const app = express();
-// middleware channel
-app.use(express.static('./public'));
+const dbTools = require('./db')
+const { v4: uuidv4 } = require('uuid');
+
+app.use(express.static('public'));
 app.use(express.json());
 
 
-// Sample data (in-memory database)
-let notes = [];
+app.get('/', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'index.html'));
+
+});
+
+app.get('/notes', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'notes.html'));
+
+});
+
+app.get('/api/notes/:notes', (req, res) => {
+  const noteData = dbTools.getData();
+  const note = req.params.note
+
+  const obj = noteData.find(noteObj => noteObj.title === note);
+
+  if (obj) {
+    return res.json(obj);
+  }
+
+  res.json({
+    message: 'no notes stored.'
+  });
+
+});
 
 
 app.get('/api/notes', (req, res) => {
+  const noteData = dbTools.getData();
+  res.json(noteData);
 
-    res.json(notes);
-});
+})
 
-// Route to handle POST requests
 app.post('/api/notes', (req, res) => {
-    
-    const newNote = req.body;
+  const notes = dbTools.getData();
+  const newNote = req.body;
+  newNote.id = uuidv4();
 
-    notes.push(newNote);
+  notes.push(newNote);
+  dbTools.writeData(notes);
 
-    res.json({
-        message: 'Note added successfully', note: newNote
-    });
+  res.json({ message: 'Note added successfully', note: newNote });
 });
+
+app.delete('/api/notes/:id', (req, res) => {
+  const notes = dbTools.getData();
+
+  const noteIndex = notes.findIndex((value) => value.id === req.params.id);
+if (noteIndex === -1) {
+  res.json( {message: 'No id found'});
+  return 
+}
+
+notes.splice(noteIndex, 1);
+dbTools.writeData(notes);
+
+res.json({ message: 'Note removessuccessfully'})
+})
 
 // Start the server and listen on port 3333
 app.listen(3333, () => console.log('Server started on port 3333'));
 
-
-
-
-
-
-
-
-
-
-
-// // Returns object by type
-// app.get('/api/notes', (clientRequestObj, serverResponseObj) => {
-//   const funData = dbTools.getData();
-//   const funThing = clientRequestObj.params.funThing;
-
-//   const obj = funData.find(funObj => funObj.type === funThing);
-
-//   if (obj) {
-//     return serverResponseObj.json(obj);
-//   }
-
-//   serverResponseObj.json({
-//     message: 'Type of that name was not found.'
-//   });
-
-// });
-
-
-// app.get('/api/notes', (clientRequestObj, serverResponseObj) => {
-//   const funData = dbTools.getData();
-//   serverResponseObj.json(funData);
-// });
-
-// app.post('/api/notes', (clientRequestObj, serverResponseObj) => {
-//   const funData = dbTools.getData();
-
-//   funData.push(clientRequestObj.body);
-//   dbTools.writeData(funData);
-
-//   serverResponseObj.json({
-//     message: 'DB updated successfully'
-//   })
-// });
